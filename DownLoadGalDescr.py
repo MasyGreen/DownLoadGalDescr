@@ -90,11 +90,14 @@ class DecodeLocalFile(threading.Thread):
         _codec_page = get_encoding_type(params.get("path_file_from"))  # получаем кодировку
         print(f'{bcolors.OKBLUE}File: {params.get("path_file_from")}, codepage = {_codec_page}')
         try:
+            decode_test = ''
             with open(params.get("path_file_from"), 'r', encoding='windows-1251') as fr:
-                with open(params.get("path_file_to"), 'w', encoding='UTF-8') as fw:
-                    for line in fr:
-                        if line[0] != '№':
-                            fw.write(line[:-1] + '\n')  # \r\n
+                for code_text in fr.readlines():
+                    if code_text[0] != '№':
+                        decode_test += code_text[:-1] + '\n'  # \r\n
+            with open(params.get("path_file_to"), 'w', encoding='UTF-8') as fw:
+                fw.write(decode_test)
+
             print(f'{bcolors.OKGREEN}   {params.get("path_file_from")}>>>{params.get("path_file_to")}')
         except:
             print(f'{bcolors.FAIL}  Ошибка файла: {params.get("path_file_from")}')
@@ -192,12 +195,14 @@ def main():
         queue_decodefile.join()
 
         # Удаляем не перекодированные файлы
-        for _el in ListParamsDecodeFile:
-            os.remove(os.path.join(_el.get("path"), _el.get("filename")).lower())
+        if _UseDeleteFileAfter:
+            for _el in ListParamsDecodeFile:
+                os.remove(os.path.join(_el.get("path"), _el.get("filename")).lower())
 
 
 #  ------------------------------------------------------------------------
 if __name__ == "__main__":
     _useDowloadFTP = True  # скачивать файлы с FTP
     _useDecodeFile = True  # перекодировать файлы
+    _UseDeleteFileAfter = True  # удалять файлы
     main()
