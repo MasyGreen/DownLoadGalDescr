@@ -1,11 +1,8 @@
 import os
-import threading
-import urllib
-from ftplib import FTP
 import re
+import threading
 from ftplib import FTP
 from queue import Queue
-from threading import Thread
 
 from chardet import detect
 
