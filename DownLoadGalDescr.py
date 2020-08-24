@@ -4,8 +4,6 @@ import threading
 from ftplib import FTP
 from queue import Queue
 
-from chardet import detect
-
 import config
 
 
@@ -46,20 +44,19 @@ class DownloadFromFTP(threading.Thread):
 
         # """Connect to an FTP server and bring down files to a local directory"""
         try:
-            ftp = FTP(config.HOST)
+            ftp = FTP(config.HOST, timeout=400)
             print(f"{bcolors.OKBLUE}FTP. Login to FTP: {config.HOST}, try goto {config.HOSTDir}. {ftp.login()}")
             ftp.cwd(config.HOSTDir)
             try:
                 # open a the local file
-                with open(f'{config.WorkFolder}\\{params.get("local_file_name")}_win1251', 'wb') as _local_file:
+                with open(f'{config.WorkFolder}\\{params.get("local_file_name")}_WIN1251'.upper(), 'wb') as _local_file:
                     ftp.retrbinary('RETR ' + params.get("ftp_file_name"), _local_file.write)
                 print(f'{bcolors.OKGREEN}   FTP. {params.get("ftp_file_name")}>>>{params.get("local_file_name")}')
             except:
                 print(f"{bcolors.FAIL}  FTP: Connection Error {config.HOST}")
+            ftp.close()  # Close FTP connection
         except:
             print(f"{bcolors.FAIL}  FTP: Couldn't find server {config.HOST}")
-        ftp.close()  # Close FTP connection
-        ftp = None
 
 
 # --------------------------------------------------------
@@ -84,7 +81,7 @@ class DecodeLocalFile(threading.Thread):
             self.queue.task_done()
 
     def FunDecodeLocalFile(self, params):
-        _codec_page = get_encoding_type(params.get("path_file_from"))  # получаем кодировку
+        _codec_page = 'windows-1251'
         print(f'{bcolors.OKBLUE}File: {params.get("path_file_from")}, codepage = {_codec_page}')
         try:
             decode_test = ''
@@ -115,23 +112,11 @@ def getftplistfile():
                                 ftp_file)  # регулярное выражение '_'+ 'несколько цифр' + '.'
 
             _row = {"ftp_file_path": f'{config.HOST}/{config.HOSTDir}/{ftp_file}', "ftp_file_name": ftp_file,
-                    "local_file_name": local_file}
+                    "local_file_name": local_file.upper()}
             ListFTPFile.append(_row)
             print(f"{bcolors.OKGREEN}   ftp: {_row}")
             ftp.close()
     return ListFTPFile
-
-
-# --------------------------------------------------------
-# Получаем кодировку файла
-def get_encoding_type(file):
-    with open(file, 'rb') as f:
-        rawdata = f.read()
-    try:
-        return detect(rawdata)['encoding']
-    except:
-        return ''
-
 
 # --------------------------------------------------------
 
@@ -172,9 +157,9 @@ def main():
         ListParamsDecodeFile = []  # Файлы для перкодировки
         for path, subdirs, files in os.walk(config.WorkFolder):
             for _local_file in files:
-                if _local_file.find("_win1251") != -1:
+                if _local_file.find("_WIN1251") != -1:
                     row = {"path": path, "filename": _local_file, "path_file_from": f'{path}{_local_file}',
-                           "path_file_to": f'{path}{_local_file.replace("_win1251", "")}'}
+                           "path_file_to": f'{path}{_local_file.replace("_WIN1251", "")}'}
                     ListParamsDecodeFile.append(row)
                     print(row)
         print(f'{bcolors.HEADER}Starting encode file')

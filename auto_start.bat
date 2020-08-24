@@ -1,5 +1,5 @@
 "python.exe" "DownLoadGalDescr.py"
-cd /D c:\Work\Python\_GalDesriptions910\
+cd /D y:\DISKD\DownLoadGalDescr\Download\
 set DD=%date:~0,2%
 set MM=%date:~3,2%
 set YYYY=%date:~6,4%

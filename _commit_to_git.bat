@@ -1,11 +1,15 @@
 set DD=%date:~0,2%
 set MM=%date:~3,2%
 set YYYY=%date:~6,4%
-set DT=_%YYYY%%MM%%DD%
-
+set Hour=%time:~0,2%
+set Min=%time:~3,2%
+set DT=%YYYY%%MM%%DD%_%Hour%%Min%
 SET DEBUGDATE=%DT%
+SET PVERSION=UpperCase
 
 git add .
-git commit -m "%DT%"
-git push origin master                                                        	
+git commit -m "%PVERSION%_%DT%"
+git tag -a %PVERSION%_%DT% -m "%PVERSION%_%DT%"
+git push origin master
+git push --tags
 pause
