@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+build
+dist
+locald.ini
+password.py
+set.bat
+
 # C extensions
 *.so
 

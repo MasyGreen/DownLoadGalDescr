@@ -49,7 +49,7 @@ class DownloadFromFTP(threading.Thread):
             ftp.cwd(config.HOSTDir)
             try:
                 # open a the local file
-                with open(f'{config.WorkFolder}\\{params.get("local_file_name")}_WIN1251'.upper(), 'wb') as _local_file:
+                with open(f'{WorkFolder}\\{params.get("local_file_name")}_WIN1251'.upper(), 'wb') as _local_file:
                     ftp.retrbinary('RETR ' + params.get("ftp_file_name"), _local_file.write)
                 print(f'{bcolors.OKGREEN}   FTP. {params.get("ftp_file_name")}>>>{params.get("local_file_name")}')
             except:
@@ -128,7 +128,7 @@ def main():
     if _useDowloadFTP:
         # удалить все файлы, проще выкачать заново
         print(f'{bcolors.HEADER}Delete old file')
-        for path, subdirs, files in os.walk(config.WorkFolder):
+        for path, subdirs, files in os.walk(WorkFolder):
             for _local_file in files:
                 if _local_file.find(".txt") != -1:
                     print(f'{bcolors.OKBLUE}    Удалить: {path}{_local_file}')
@@ -155,7 +155,7 @@ def main():
     if _useDecodeFile:
         print(f'{bcolors.HEADER}Starting get list encode file')
         ListParamsDecodeFile = []  # Файлы для перкодировки
-        for path, subdirs, files in os.walk(config.WorkFolder):
+        for path, subdirs, files in os.walk(WorkFolder):
             for _local_file in files:
                 if _local_file.find("_WIN1251") != -1:
                     row = {"path": path, "filename": _local_file, "path_file_from": f'{path}{_local_file}',
@@ -184,6 +184,8 @@ def main():
 
 #  ------------------------------------------------------------------------
 if __name__ == "__main__":
+    curdir = os.getcwd()
+    WorkFolder = f'{curdir}\Download\\'
     _useDowloadFTP = True  # скачивать файлы с FTP
     _useDecodeFile = True  # перекодировать файлы
     _UseDeleteFileAfter = True  # удалять файлы
