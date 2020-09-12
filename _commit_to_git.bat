@@ -5,7 +5,7 @@ set Hour=%time:~0,2%
 set Min=%time:~3,2%
 set DT=%YYYY%%MM%%DD%_%Hour%%Min%
 SET DEBUGDATE=%DT%
-SET PVERSION=Add_EMail_Notification
+SET PVERSION=Edit_BAT_File
 
 git add .
 git commit -m "%PVERSION%_%DT%"
